@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -17,7 +19,39 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
-}
+
+  const cardDiv = document.createElement("div");
+  cardDiv.classList.add("card");
+
+  const headlineDiv = document.createElement("div");
+  headlineDiv.classList.add("headline");
+  headlineDiv.textContent = article.headline;
+
+  const authorDiv = document.createElement("div");
+  authorDiv.classList.add("author");
+
+  const authorImgContainer = document.createElement("div");
+  authorImgContainer.classList.add("img-container");
+
+  const authorImg = document.createElement("img");
+  authorImg.src = article.authorPhoto;
+
+  const authorNameSpan = document.createElement("span");
+  authorNameSpan.textContent = `By ${article.authorName}`;
+
+  authorImgContainer.appendChild(authorImg);
+  authorDiv.appendChild(authorImgContainer);
+  authorDiv.appendChild(authorNameSpan);
+
+  cardDiv.appendChild(headlineDiv);
+  cardDiv.appendChild(authorDiv);
+
+  cardDiv.addEventListener("click", () => {
+    console.log(article.headline);
+  });
+
+  return cardDiv;
+};
 
 const cardAppender = (selector) => {
   // TASK 6
@@ -28,6 +62,25 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
-}
 
-export { Card, cardAppender }
+  axios
+    .get("http://localhost:5001/api/articles")
+    .then((res) => {
+      const javascriptArticles = res.data.articles.javascript;
+      const bootStrapArticles = res.data.articles.bootstrap;
+      const technologyArticles = res.data.articles.technology;
+      const jqueryArticles = res.data.articles.jquery;
+      const nodeArticles = res.data.articles.node;
+
+      const cardsContainer = document.querySelector(".cards-container");
+
+      javascriptArticles.forEach((article) => {
+        cardsContainer.appendChild(Card(article));
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export { Card, cardAppender };
